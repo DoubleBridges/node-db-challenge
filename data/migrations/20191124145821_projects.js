@@ -11,7 +11,7 @@ exports.up = function(knex) {
         tbl.boolean('project_completed', false )
       })
       .createTable('resource', tbl => {
-        tbl.increments()
+        tbl.increments()        
         tbl.string('resource_name', 255)
           .notNullable()
           .unique()
@@ -28,7 +28,22 @@ exports.up = function(knex) {
           .references('project.id')
           .onDelete('CASCADE')
           .onUpdate('CASCADE')
-    })
+      })
+      .createTable('project_resource', tbl => {
+        tbl.increments()
+        tbl.integer('project_id')
+          .unsigned()
+          .notNullable()
+          .references('project.id')
+          .onDelete('CASCADE')
+          .onUpdate('CASCADE')
+        tbl.integer('resource_id')
+         .unsigned()
+         .notNullable()
+         .references('resource.id')
+         .onDelete('CASCADE')
+         .onUpdate('CASCADE')
+      })
   )
 };
 
