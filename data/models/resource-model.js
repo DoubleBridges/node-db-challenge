@@ -1,5 +1,5 @@
 import db from '../db-config'
-import { convertToBoolean } from '../helpers/projectHelpers';
+import { convertToBoolean } from '../helpers/helpers';
 
 
 export const getAll = async (req, res) => {

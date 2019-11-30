@@ -18,7 +18,10 @@ export const getAll = async (req, res) => {
 export const getOne = async (req, res) => {
   let project = req.project
   let tasks = await db('task').where('project_id', project.id)
-  let resources = await db('project_resource').where('project_id', project.id)
+  let resources = await db('project_resource as pr')
+    .join('resource as r')
+    .select('pr.id', 'pr.project_id', 'pr.resource_id', 'r.resource_name', 'r.resource_description', 'pr.note')
+    .where('pr.project_id', project.id)
   tasks = tasks.map(task => convertToBoolean(task, 'task'))
   project = { ...project, tasks: tasks, resources: resources  }
   res.status(200).json(convertToBoolean(project, 'project'))

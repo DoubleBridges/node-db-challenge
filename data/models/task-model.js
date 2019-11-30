@@ -1,5 +1,5 @@
 import db from '../db-config'
-import { convertToBoolean } from '../helpers/projectHelpers';
+import { convertToBoolean } from '../helpers/helpers';
 
 
 export const getAll = async (req, res) => {
@@ -16,7 +16,8 @@ export const getAll = async (req, res) => {
 }
 
 export const getOne = async (req, res) => {
-  const task = req.task
+  let task = req.task
+  let contexts = await db('context').where
   res.status(200).json(convertToBoolean(task, 'task'))
 }
 
