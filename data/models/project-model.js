@@ -1,5 +1,5 @@
 import db from '../db-config'
-import { convertToBoolean } from '../helpers/helpers';
+import { convertToBoolean, getContext } from '../helpers/helpers';
 
 
 export const getAll = async (req, res) => {
@@ -17,24 +17,14 @@ export const getAll = async (req, res) => {
 
 export const getOne = async (req, res) => {
   let project = req.project
-  let tasks = await db('task').where('task.project_id', project.id)
-  let resources = await db.select('pr.id', 'pr.resource_id', 'r.resource_name', 'r.resource_description', 'pr.project_id')
+  const tasks = await db('task').where('task.project_id', project.id)
+  const resources = await db.select('r.id', 'r.resource_name', 'r.resource_description')
     .from('resource as r')
     .join('project_resource as pr', function () {
       this.on(project.id, '=', 'pr.project_id')
       .andOn('pr.resource_id', '=', 'r.id')
     })
-  const getContext = tasks.map(async task => {
-    const contexts = await db.select('c.context_name', 'c.context_description')
-      .from('context as c')
-      .join('task_context as tc', function () {
-        this.on(task.id, '=', 'tc.task_id')
-        .andOn('tc.context_id', '=', 'c.id')
-      })
-    convertToBoolean(task, 'task')
-    return { ...task, contexts: contexts }
-  })
-  Promise.all(getContext)
+  Promise.all(getContext(tasks, db))
     .then(result => {
       project = { ...project, tasks: result, resources: resources  }
       res.status(200).json(convertToBoolean(project, 'project'))    

@@ -1,12 +1,12 @@
 import db from '../db-config'
-import { convertToBoolean } from '../helpers/helpers';
+import { convertToBoolean, getContext } from '../helpers/helpers';
 
 
 export const getAll = async (req, res) => {
   try {
     let tasks = await db('task')
-    tasks = tasks.map(task => convertToBoolean(task, 'task'))
-    res.status(200).json(tasks)
+    Promise.all(getContext(tasks, db))
+    .then(tasks => res.status(200).json(tasks))
   } catch (err) {
     console.log(err)
     res.status(500).json({
