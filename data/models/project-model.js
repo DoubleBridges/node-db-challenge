@@ -32,9 +32,7 @@ export const getOne = async (req, res) => {
         .andOn('tc.context_id', '=', 'c.id')
       })
     convertToBoolean(task, 'task')
-    const taskWithContext = { ...task, contexts: contexts }
-    console.log(taskWithContext)
-    return taskWithContext
+    return { ...task, contexts: contexts }
   })
   Promise.all(getContext)
     .then(result => {
