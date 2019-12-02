@@ -6,6 +6,7 @@ import morgan from 'morgan'
 import projectRouter from './routers/projectRouter'
 import taskRouter from './routers/taskRouter'
 import resourceRouter from './routers/resourceRouter'
+import contextRouter from './routers/contextRouter'
 
 const server = express()
 
@@ -21,6 +22,7 @@ server.get('/', (req, res) => {
 server.use('/api/project', projectRouter)
 server.use('/api/task', taskRouter)
 server.use('/api/resource', resourceRouter)
+server.use('/api/context', contextRouter)
 
 
 export default server
