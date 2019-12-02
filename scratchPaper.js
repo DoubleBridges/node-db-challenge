@@ -37,13 +37,13 @@ exports.up = function(knex) {
         tbl.string('context_description', 255)
         
       })
-      .createTable('project_resource', tbl => {
+      .createTable('task_resource', tbl => {
         tbl.increments()
         tbl.string('note', 255)
-        tbl.integer('project_id')
+        tbl.integer('task_id')
           .unsigned()
           .notNullable()
-          .references('project.id')
+          .references('task.id')
           .onDelete('CASCADE')
           .onUpdate('CASCADE')
         tbl.integer('resource_id')

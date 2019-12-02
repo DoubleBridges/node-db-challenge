@@ -17,14 +17,31 @@ export const getAll = async (req, res) => {
 
 export const getOne = async (req, res) => {
   let project = req.project
-  let tasks = await db('task').where('project_id', project.id)
-  let resources = await db('project_resource as pr')
-    .join('resource as r')
-    .select('pr.id', 'pr.project_id', 'pr.resource_id', 'r.resource_name', 'r.resource_description', 'pr.note')
-    .where('pr.project_id', project.id)
-  tasks = tasks.map(task => convertToBoolean(task, 'task'))
-  project = { ...project, tasks: tasks, resources: resources  }
-  res.status(200).json(convertToBoolean(project, 'project'))
+  let tasks = await db('task').where('task.project_id', project.id)
+  let resources = await db.select('pr.id', 'pr.resource_id', 'r.resource_name', 'r.resource_description', 'pr.project_id')
+    .from('resource as r')
+    .join('project_resource as pr', function () {
+      this.on(project.id, '=', 'pr.project_id')
+      .andOn('pr.resource_id', '=', 'r.id')
+    })
+  const getContext = tasks.map(async task => {
+    const contexts = await db.select('c.context_name', 'c.context_description')
+      .from('context as c')
+      .join('task_context as tc', function () {
+        this.on(task.id, '=', 'tc.task_id')
+        .andOn('tc.context_id', '=', 'c.id')
+      })
+    convertToBoolean(task, 'task')
+    const taskWithContext = { ...task, contexts: contexts }
+    console.log(taskWithContext)
+    return taskWithContext
+  })
+  Promise.all(getContext)
+    .then(result => {
+      project = { ...project, tasks: result, resources: resources  }
+      res.status(200).json(convertToBoolean(project, 'project'))    
+  })
+
 }
 
 export const makeOne = async (req, res) => {

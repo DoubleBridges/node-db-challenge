@@ -5,7 +5,6 @@ import { convertToBoolean } from '../helpers/helpers';
 export const getAll = async (req, res) => {
   try {
     let resources = await db('resource')
-    resources = resources.map(resource => convertToBoolean(resource, 'resource'))
     res.status(200).json(resources)
   } catch (err) {
     console.log(err)

@@ -27,7 +27,6 @@ exports.up = function(knex) {
           .notNullable()
           .references('project.id')
           .onDelete('CASCADE')
-          .onUpdate('CASCADE')
       })
       .createTable('context', tbl => {
         tbl.increments()        
